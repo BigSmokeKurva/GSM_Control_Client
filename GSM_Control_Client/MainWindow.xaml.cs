@@ -29,7 +29,7 @@ namespace GSM_Control_Client
     {
         Style _portListStyle;
         Style _messageStyle;
-        string ip = "91.123.24.57";
+        string ip = "0.0.0.0";
         int port = 9710;
         string api = "rty7u467rtuty4567tyj45y";
         public Dictionary<string, Dictionary<string, dynamic>> ports = new();
