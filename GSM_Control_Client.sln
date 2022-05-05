@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32421.90
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GSM_Control_Client", "GSM_Control_Client\GSM_Control_Client.csproj", "{37784851-A122-4EB4-B898-B7A0AEAA399D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{37784851-A122-4EB4-B898-B7A0AEAA399D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37784851-A122-4EB4-B898-B7A0AEAA399D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37784851-A122-4EB4-B898-B7A0AEAA399D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37784851-A122-4EB4-B898-B7A0AEAA399D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5BCB60B2-64CF-4AC9-B06D-2EDA2F884D10}
+	EndGlobalSection
+EndGlobal
