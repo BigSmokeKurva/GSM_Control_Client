@@ -29,7 +29,7 @@ namespace GSM_Control_Client
     {
         Style _portListStyle;
         Style _messageStyle;
-        string ip = "0.0.0.0";
+        string ip = "91.123.24.57";
         int port = 9710;
         string api = "rty7u467rtuty4567tyj45y";
         public Dictionary<string, Dictionary<string, dynamic>> ports = new();
@@ -62,8 +62,9 @@ namespace GSM_Control_Client
                     var selectedPort = PortsListBox.SelectedValue.ToString().Replace("System.Windows.Controls.ListBoxItem: ", string.Empty);
                     var messages = new List<TextBox>();
                     foreach (string message in ports[selectedPort]["messages"].ToArray()) { if (message == "No messages") continue; messages.Add(new TextBox() { Text = message, Style = _messageStyle }); }
-                    if(MessagesListBox.Items.Count != messages.Count) MessagesListBox.ItemsSource = messages;
-                    if (PortNameTitleTextBlock.Text != selectedPort)
+                    messages.Reverse();
+                    if (MessagesListBox.Items.Count != messages.Count) MessagesListBox.ItemsSource = messages;
+                    if (PortNameTitleTextBlock.Text != selectedPort || ports[selectedPort]["phoneNumber"] != PhoneNumberTextBox.Text)
                     {
                         InfobarBorder.Visibility = Visibility.Visible;
                         PortNameTitleTextBlock.Text = selectedPort;
