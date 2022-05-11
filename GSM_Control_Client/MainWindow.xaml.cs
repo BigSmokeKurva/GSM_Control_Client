@@ -27,30 +27,37 @@ namespace GSM_Control_Client
     /// </summary>
     public partial class MainWindow : Window
     {
-        Style _portListStyle;
         Style _messageStyle;
-        string ip = "0.0.0.0";
-        int port = 9710;
-        string api = "rty7u467rtuty4567tyj45y";
+        string ip;
+        int port;
+        string api;
         public Dictionary<string, Dictionary<string, dynamic>> ports = new();
         public MainWindow()
         {
             InitializeComponent();
+            ReadConfig();
             // Проверка подклбчения
             try { WebRequest.Create($"http://{ip}:{port}/{api}").GetResponse(); }
             catch
             {
-                MessageBox.Show("Server error!");
+                MessageBox.Show($"Server connection error! ({ip}:{port})");
                 Environment.Exit(0);
             }
             Title += $" - connected {ip}:{port}";
-            _portListStyle = (Style)FindResource("PortListStyle");
             _messageStyle = (Style)FindResource("MessageStyle");
             new Thread(ThreadPortsChecker).Start();
-            new Thread(ThreadInfobarUpdate).Start();
+            new Thread(ThreadBoardUpdate).Start();
 
         }
-        void ThreadInfobarUpdate()
+        void ReadConfig()
+        {
+            using var sr = new StreamReader("config.json");
+            dynamic json = Newtonsoft.Json.JsonConvert.DeserializeObject(sr.ReadToEnd());
+            ip = json["ip"];
+            port = json["port"];
+            api = json["api"];
+        }
+        void ThreadBoardUpdate()
         {
             while (true)
             {
@@ -59,20 +66,39 @@ namespace GSM_Control_Client
                 Dispatcher.Invoke(() =>
                 {
                     if (PortsListBox.SelectedValue is null) return;
+                    if (BoardBorder.Visibility != Visibility.Visible) BoardBorder.Visibility = Visibility.Visible;
                     var selectedPort = PortsListBox.SelectedValue.ToString().Replace("System.Windows.Controls.ListBoxItem: ", string.Empty);
-                    var messages = new List<TextBox>();
-                    foreach (string message in ports[selectedPort]["messages"].ToArray()) { if (message == "No messages") continue; messages.Add(new TextBox() { Text = message, Style = _messageStyle }); }
-                    messages.Reverse();
-                    if (MessagesListBox.Items.Count != messages.Count) MessagesListBox.ItemsSource = messages;
-                    if (PortNameTitleTextBlock.Text != selectedPort || ports[selectedPort]["phoneNumber"] != PhoneNumberTextBox.Text)
+                    if(selectedPort == "Dashboard")
                     {
-                        InfobarBorder.Visibility = Visibility.Visible;
-                        PortNameTitleTextBlock.Text = selectedPort;
-                        GSMModelTextBox.Text = ports[selectedPort]["gsmInfo"];
-                        AvailabilityTextBox.Text = ports[selectedPort]["availability"].ToString();
-                        PhoneNumberTextBox.Text = ports[selectedPort]["phoneNumber"];
-                        OperatorTextBox.Text = ports[selectedPort]["operator"];
-                        MessagesListBox.ItemsSource = messages;
+                        if(DashboardGrid.Visibility != Visibility.Visible)
+                        {
+                            DashboardGrid.Visibility = Visibility.Visible;
+                            PortBoardGrid.Visibility = Visibility.Hidden;
+                        }
+                        List<string> dashboardPorts = new();
+                        foreach (var portName in ports.Keys) dashboardPorts.Add($"{portName}: Availability: {ports[portName]["availability"]}; MessagesCount: {ports[portName]["messages"].Count}; Operator: {ports[portName]["operator"]}; PhoneNumber: {ports[portName]["phoneNumber"]}.");
+                        DashboardList.ItemsSource = dashboardPorts;
+                    }
+                    else
+                    {
+                        if (PortBoardGrid.Visibility != Visibility.Visible)
+                        {
+                            DashboardGrid.Visibility = Visibility.Hidden;
+                            PortBoardGrid.Visibility = Visibility.Visible;
+                        }
+                        var messages = new List<TextBox>();
+                        foreach (string message in ports[selectedPort]["messages"].ToArray()) { messages.Add(new TextBox() { Text = message, Style = _messageStyle }); }
+                        messages.Reverse();
+                        if (PortNameTitleTextBlock.Text != selectedPort || ports[selectedPort]["phoneNumber"] != PhoneNumberTextBox.Text)
+                        {
+                            PortNameTitleTextBlock.Text = selectedPort;
+                            GSMModelTextBox.Text = ports[selectedPort]["gsmInfo"];
+                            AvailabilityTextBox.Text = ports[selectedPort]["availability"].ToString();
+                            PhoneNumberTextBox.Text = ports[selectedPort]["phoneNumber"];
+                            OperatorTextBox.Text = ports[selectedPort]["operator"];
+                            MessagesListBox.ItemsSource = messages;
+                        }
+                        else if (MessagesListBox.Items.Count != messages.Count) MessagesListBox.ItemsSource = messages;
                     }
                 });
             }
@@ -101,7 +127,7 @@ namespace GSM_Control_Client
                     };
                     Dispatcher.Invoke(() =>
                     {
-                        PortsListBox.Items.Add(new ListBoxItem() { Content = item.Name, Style = _portListStyle });
+                        PortsListBox.Items.Add(item.Name);
                     });
                 }
             }
@@ -126,7 +152,7 @@ namespace GSM_Control_Client
                         ports[item.Name]["messages"].Clear();
                         foreach (string str in res.Split("\n"))
                         {
-                            if (str.Length == 0) continue;
+                            if (str.Length == 0 || str == "No messages") continue;
                             ports[item.Name]["messages"].Add(str.Replace("|", " | "));
                         }
                     }

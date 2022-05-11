@@ -11,8 +11,18 @@
             <Setter Property="Height" Value="35"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontSize" Value="17"/>
             <Setter Property="FontFamily" Value="Bahnschrift"/>
+        </Style>
+        <Style x:Key="DashboardListStyle" TargetType="ListBoxItem">
+            <Setter Property="Background" Value="#FF454443"/>
+            <Setter Property="Foreground" Value="#FFC7B9B9"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Focusable" Value="False"/>
         </Style>
         <Style x:Key="MessageStyle" TargetType="TextBox">
             <Setter Property="Background" Value="#FF454443"/>
